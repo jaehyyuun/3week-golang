@@ -46,5 +46,5 @@ go test ./...
 
 ## 과제 제출 안내
 1. 3week-golang Repository를 Fork 합니다.
-2. 각자 Fork된 Repository 내에서 실습을 수행합니다.
+2. 각자 Fork된 Repository 내에서 실README.md를 읽고 실습을 수행합니다(각 README에 과제 존재)
 3. 실습 완료 후 PR로 제출합니다.
