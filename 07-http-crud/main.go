@@ -12,11 +12,13 @@ type User struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 	Age  int    `json:"age"`
+	Email string `json:"email"`
 }
 
 type userRequest struct {
 	Name string `json:"name"`
 	Age  int    `json:"age"`
+	Email string `json:"email"`
 }
 
 var users = []User{}
@@ -35,7 +37,7 @@ func main() {
 func usersHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		getUsers(w)
+		getUsers(w, r)
 	case http.MethodPost:
 		createUser(w, r)
 	default:
@@ -62,8 +64,28 @@ func userByIDHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getUsers(w http.ResponseWriter) {
-	writeJSON(w, http.StatusOK, users)
+func getUsers(w http.ResponseWriter, r *http.Request) {
+	minAgeStr := r.URL.Query().Get("minAge")
+	if minAgeStr == ""{
+		writeJSON(w, http.StatusOK, users)
+		return
+	}
+
+	minAge, err := strconv.Atoi(minAgeStr)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "invalid minAge")
+		return
+	}
+
+	var result []User
+	for _, user := range users {
+		if user.Age >= minAge {               
+			result = append(result, user)
+		}
+	}
+
+    writeJSON(w, http.StatusOK, result)
+
 }
 
 func getUser(w http.ResponseWriter, id int) {
@@ -87,6 +109,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 		ID:   nextID,
 		Name: req.Name,
 		Age:  req.Age,
+		Email: req.Email,
 	}
 	nextID++
 	users = append(users, user)
@@ -104,6 +127,7 @@ func updateUser(w http.ResponseWriter, r *http.Request, id int) {
 		if users[i].ID == id {
 			users[i].Name = req.Name
 			users[i].Age = req.Age
+			users[i].Email = req.Email
 			writeJSON(w, http.StatusOK, users[i])
 			return
 		}

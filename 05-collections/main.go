@@ -19,6 +19,14 @@ func main() {
 	}
 	scores["Carol"] = 88
 
+	scores["정재현"] = 95
+	total:=0
+	for _, score := range scores{
+		total +=score
+	}
+	avg := total / len(scores)
+	fmt.Println("평균:", avg)
+
 	aliceScore, ok := scores["Alice"]
 	if ok {
 		fmt.Println("Alice score:", aliceScore)
